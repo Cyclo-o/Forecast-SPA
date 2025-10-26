@@ -23,6 +23,10 @@ Options:
 - Create a branch named `feature/your-feature-name`.
 - Create a PR against `main`.
 
+### Credits / Attributions
+
+- weather-icons — Animated weather icons used in this project. Original project: basmilius/weather-icons (https://github.com/basmilius/weather-icons). Licensed under the MIT License. Original license copied to /vendor/weather-icons/LICENSE.
+
 ## License
 
 This project is licensed under the MIT License — see the LICENSE file.
