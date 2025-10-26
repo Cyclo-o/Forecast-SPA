@@ -4,15 +4,18 @@ A single-page application to display weather forecasts.
 
 ## Quick start
 
-1. Install dependencies
-   - npm: `npm install`
-   - yarn: `yarn`
+Depending on how this project is structured, use one of the following to run it locally 
+Options:
 
-2. Run locally
-   - `npm run dev` or `npm start` (replace with the start command your project uses)
+1) Plain static files (no npm)
+   - Open the `index.html` file in your browser, or use a simple static server:
+     - Using npx (no install): `npx serve .`
+     - Or install http-server: `npm i -g http-server` then run: `http-server .`
 
-3. Build
-   - `npm run build`
+2) VS Code — Live Server extension (recommended while developing)
+   - Install the "Live Server" extension in VS Code.
+   - Right-click `index.html` → "Open with Live Server".
+   - This is handy if you did not set up an npm toolchain.
 
 ## Contributing
 
