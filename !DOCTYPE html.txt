@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+
+    <!-- Link to the Semantic UI relative path -->
+    <link rel = "stylesheet" href = "Semantic-UI-CSS-master/semantic.min.css">
+
+    <!-- Custom Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=SUSE+Mono:ital,wght@0,100..800;1,100..800&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Apply custom font */
+        h1.ui.header {
+            font-family: 'Bungee', sans-serif; font-size: 68px; padding-top: 45px;
+        }
+
+        div.ui.fluid.card {
+            font-family: 'Work Sans', sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 550;
+            font-style: normal;
+        }
+
+        .ui.card .content .header {
+            font-family: "SUSE Mono", sans-serif;
+            font-optical-sizing: auto;
+            font-size: 45px !important;
+            font-style: normal;
+            text-align: center;
+            color: white;
+            }
+
+        /* Center the main header */
+        h1.ui.header {
+            text-align: center;
+        }
+
+        /* Sticky header that stays on top */
+        .sticky-header {
+            position: sticky;
+            background: linear-gradient(135deg, #021711 0%, #450739 100%);
+            top: -50px;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .sticky-header h1.ui.header {
+            margin-bottom: 0.9rem;
+            transition: all 1s ease;
+            color: #CAC6BE;
+            text-shadow: none
+        }
+
+        .sticky-header h1.ui.header.scrolled {
+            color: #C268F3;
+            text-shadow: 0 0 0px #C268F3, 5px 10px 0px black;
+        }
+
+        .sticky-header .ui.container {
+            text-align: center;
+        }
+
+        .ui.button.primary {
+            text-align: center;
+            background: linear-gradient(-50deg, #085877 0%, #0280d4 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .ui.container .ui.fluid.card {
+            background: linear-gradient(130deg, #021711 0%, #450739 100%); 
+        }
+
+        .ui.container .ui.fluid.card .description {
+            color: white;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        /* Horizontal scrolling container */
+        .hourly-scroll-container {
+            overflow-x: auto;  /* Enables horizontal scrolling */
+            overflow-y: hidden;
+            padding: 1rem 0;
+            cursor: grab;  /* Shows it's draggable */
+        }
+
+        .hourly-scroll-container:active {
+            cursor: grabbing;
+        }
+
+        /* Container for hourly items */
+        .hourly-items {
+            display: flex;
+            gap: 1rem;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Individual hour card */
+        .hour-item {
+            min-width: 120px;  /* Fixed width so 8 are visible */
+            flex-shrink: 0;  /* Prevents shrinking */
+            background: linear-gradient(130deg, #A42D6B 0%, #6B1D68 100%);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .hour-item:hover {
+            transform: translateY(-5px);  /* Lift effect on hover */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .hour-time {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .hour-temp {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin: 0.5rem 0;
+        }
+
+        .hour-precip {
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;  /* Prevents horizontal scrolling */
+        }
+
+        /* Background image layer with blur and parallax */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background-image: url('background.jpg');  /* ← Change to your image filename */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(5px);  /* Blurs the image */
+            z-index: -1;  /* Puts it behind everything */
+            transform: translateZ(0);  /* Enables parallax */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sticky Header Container (direct child of body) -->
+    <div class="sticky-header">
+        <div class="ui container">
+            <h1 class="ui header">Weather Forecast</h1>
+            <button class="ui button primary">REFRESH</button>
+        </div>
+    </div>
+
+    <!-- Main Content Container (separate from sticky header) -->
+    <div class="ui container" style="margin-top: 2rem;">
+        <div class="ui fluid card">
+            <div class="content">
+                <div class="header">CURRENT CONDITIONS</div>
+                <div class="description">
+                    <p>Temperature</p>
+                    <p>Feels like</p>
+                    <p>Conditions (e.g., Rainy, Sunny)</p>
+                    <p>Humidity</p>
+                    <p>Pressure</p>
+                    <p>Dew Point</p>
+                    <p>Wind Speed</p>
+                    <p>Wind Direction</p>
+                    <p>Chance of Precipitation</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui fluid card">
+            <div class="content">
+                <div class="header">HOURLY FORECAST</div>
+                <div class="hourly-scroll-container">
+                    <div class="hourly-items" id="hourly-forecast">
+                        <!-- Hours will be added here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui fluid card">
+            <div class="content">
+                    <div class="header">10-DAY FORECAST</div>
+                     <div class="description">
+                        <p>Day 1: High 72°F, Low 60°F, Rainy</p>
+                        <p>Day 2: High 74°F, Low 62°F, Cloudy</p>
+                        <p>Day 3: High 76°F, Low 63°F, Sunny</p>
+                        <p>Day 4: High 78°F, Low 65°F, Partly Cloudy</p>
+                        <p>Day 5: High 77°F, Low 64°F, Rainy</p>
+                        <p>Day 6: High 75°F, Low 62°F, Sunny</p>
+                        <p>Day 7: High 73°F, Low 61°F, Cloudy</p>
+                        <p>Day 8: High 74°F, Low 63°F, Partly Cloudy</p>
+                        <p>Day 9: High 76°F, Low 64°F, Sunny</p>
+                        <p>Day 10: High 78°F, Low 66°F, Rainy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API configuration
+        const API_TOKEN = "97b936d4-e681-4890-bc79-5d58010ea333";
+        const STATION_ID = "81414";
+
+        // Build the API URL with all required parameters
+        const API_URL = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${STATION_ID}&token=${API_TOKEN}&units_temp=f&units_wind=mph&units_pressure=inhg&units_precip=in&units_distance=mi&units_other=imperial`;
+        // Function to fetch weather data
+        async function fetchWeather() {
+            console.log('Fetching weather data from API...');
+
+            try {
+                // Make the API request
+                const response = await fetch(API_URL);
+                // Convert response to JSON
+                const data = await response.json();
+                // Log the data to see what we got
+                console.log('Weather data received:', data);
+
+                // Display Current Conditions
+                displayCurrentConditions(data);
+                displayHourlyForecast(data);
+            }
+
+            catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        }
+
+        // Call the function when page loads
+        fetchWeather();
+
+        // Display Current Conditions
+        function displayCurrentConditions(data) {
+            console.log('Displaying current conditions...');
+            const current = data.current_conditions;
+
+            //Find the Current Conditions description div
+            const cards = document.querySelectorAll('.ui.fluid.card .description');
+            const currentCard = cards[0]; // First card is Current Conditions
+
+            // Get all the <p> elements
+                const paragraphs = currentCard.querySelectorAll('p');
+
+                //Update each paragraph with real data
+                paragraphs[0].textContent = `${current.air_temperature}°F`;
+                paragraphs[1].textContent = `Feels like ${current.feels_like}°F`;
+                paragraphs[2].textContent = `${current.conditions}`;
+                paragraphs[3].textContent = `${current.relative_humidity}% Humidity`;
+                paragraphs[4].textContent = `Pressure: ${current.sea_level_pressure} inHg`;
+                paragraphs[5].textContent = `Precipitation: ${current.precip_accum_local_day} in`;
+                paragraphs[6].textContent = `Wind Speed: ${current.wind_avg} mph`;
+                paragraphs[7].textContent = `Wind Direction: ${current.wind_direction_cardinal}°`;
+                paragraphs[8].textContent = `${current.precip_probability}% Chance of Rain`;
+        }
+
+        // Display hourly forecast
+        function displayHourlyForecast(data) {
+            console.log('Displaying hourly forecast...');
+
+            const hourlyData = data.forecast.hourly;
+            const container = document.getElementById('hourly-forecast');
+
+            // Clear existing content
+            container.innerHTML = '';
+
+            // Get current hour
+            const now = new Date();
+            const currentHour = now.getHours();
+
+            // Show until one hour before current one tomorrow
+            const hoursToShow = 25;
+
+            // Display the hours
+            for (let i = 0; i < hoursToShow; i++) {
+                const hourData = hourlyData[i];
+
+                // Create hour card
+                const hourCard = document.createElement('div');
+                hourCard.className = 'hour-item';
+
+                // Format the time
+                const hourTime = new Date(hourData.time * 1000); // Convert Unix timestamp
+                const timeString = hourTime.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    hour12: true
+                });
+
+                // Build the HTML
+                hourCard.innerHTML = `
+                    <div class="hour-time">${timeString}</div>
+                    <div class="hour-precip">${hourData.precip_probability}% precipitation</div>
+                    <div class="hour-temp">${hourData.air_temperature}°F</div>
+                `;
+
+                container.appendChild(hourCard);
+            }
+        }
+
+        // Sticky UI Scroll Effect
+        // Add shadow and color change to header when scrolling
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.sticky-header');
+            const headerText = header.querySelector('.sticky-header h1.ui.header');
+
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+                headerText.classList.add('scrolled'); 
+                //headerText.style.color = '#C268F3'; // Change text color on scroll
+            } else {
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+                headerText.classList.remove('scrolled');
+                //headerText.style.color = 'black'; // Revert text color
+            }
+        });
+    </script>
+</body>
+</html>

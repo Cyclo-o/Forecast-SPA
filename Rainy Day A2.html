@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+
+    <!-- Link to the Semantic UI relative path -->
+    <link rel = "stylesheet" href = "Semantic-UI-CSS-master/semantic.min.css">
+
+    <!-- Custom Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=SUSE+Mono:ital,wght@0,100..800;1,100..800&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Apply custom font */
+        h1.ui.header {
+            font-family: 'Bungee', sans-serif; font-size: 68px; padding-top: 45px;
+        }
+
+        div.ui.fluid.card {
+            font-family: 'Work Sans', sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 550;
+            font-style: normal;
+            box-shadow: none;
+        }
+
+        .ui.card .content .header {
+            font-family: "SUSE Mono", sans-serif;
+            font-optical-sizing: auto;
+            font-size: 45px !important;
+            font-style: normal;
+            text-align: center;
+            color: white;
+            }
+
+        /* Center the main header */
+        h1.ui.header {
+            text-align: center;
+        }
+
+        /* Sticky header that stays on top */
+        .sticky-header {
+            position: sticky;
+            background: linear-gradient(135deg, #021711 0%, #450739 100%);
+            top: -50px;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .sticky-header h1.ui.header {
+            margin-bottom: 0.9rem;
+            transition: all 1s ease;
+            color: #CAC6BE;
+            text-shadow: none
+        }
+
+        .sticky-header h1.ui.header.scrolled {
+            color: #C268F3;
+            text-shadow: 0 0 0px #C268F3, 5px 10px 0px black;
+        }
+
+        .sticky-header .ui.container {
+            text-align: center;
+        }
+
+        .ui.button.primary {
+            text-align: center;
+            background: linear-gradient(-50deg, #085877 0%, #0280d4 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .ui.container .ui.fluid.card {
+            background: linear-gradient(130deg, #021711 0%, #450739 100%);
+        }
+
+        .ui.container .ui.fluid.card .description {
+            color: white;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .current-detail {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;       /* space between icon and text */
+        margin-bottom: 0.5rem;
+        }
+
+        .detail-icon {
+        width: 75px;        /* adjust size as needed */
+        display: inline-block;
+        text-align: center;
+        }
+
+
+        /* temperature styling */
+        /* Layout for the two main columns */
+        .current-main {
+        align-items: center;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-items: center;
+        text-align: center;
+        gap: 7.5rem;
+        margin-bottom: 1rem;
+        }
+
+        /* Temperature section */
+        .current-temp {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transform: translateY(29px);
+        }
+
+        .temp-value {
+        font-size: 6.5rem; /* adjust freely — this is the main temperature */
+        font-weight: 800;
+        color: white;
+        }
+
+        .temp-feels {
+        font-size: 1.3rem;
+        color: white;
+        margin-top: 2.5rem;
+        }
+
+        /* Weather icon section */
+        .current-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        }
+
+        .current-weather-icon {
+        width: 12rem;
+        display: block;
+        margin-bottom: -2.5rem;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .current-condition-text {
+        font-size: 1.3rem;
+        text-align: center;
+        color: white;
+        }
+
+        /* Detail rows under each column */
+        .current-details-left {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        align-items: center;
+        transform: translateY(45px);
+        }
+
+        .current-details-right {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        font-size: 1.1rem;
+        margin-top: 2.5rem;
+        align-items: center;
+        }
+
+        /* Overall container */
+        .current-conditions {
+        color: white;
+        padding: 2rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        }
+
+
+        /* Horizontal scrolling container */
+        .hourly-scroll-container {
+            overflow-x: auto;  /* Enables horizontal scrolling */
+            overflow-y: hidden;
+            padding: 1rem 0;
+            cursor: grab;  /* Shows it's draggable */
+        }
+
+        .hourly-scroll-container:active {
+            cursor: grabbing;
+        }
+
+        /* Container for hourly items */
+        .hourly-items {
+            display: flex;
+            gap: 1rem;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Individual hour card */
+        .hour-item {
+            min-width: 120px;  /* Fixed width so 8 are visible */
+            flex-shrink: 0;  /* Prevents shrinking */
+            background: linear-gradient(130deg, #A42D6B 0%, #6B1D68 100%);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .hour-item:hover {
+            transform: translateY(-5px);  /* Lift effect on hover */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .hour-time {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .hour-temp {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            margin: 0.5rem 0;
+        }
+
+        .hour-conditions {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* Precipitation layout */
+        .hour-precip {
+        align-items: center;        /* vertical centering */
+        gap: 2px;                   /* space between icon and % */
+        margin: 0.1rem 0;           /* small vertical spacing */
+        color: white;
+        font-weight: 600;
+        font-size: 1.3rem;
+        }
+
+        /* make the raindrop nicely small */
+        .precip-icon {
+        width: 3rem;                /* smaller icon size */
+        display: inline-block;      /* prevents it from acting as a block */
+        object-fit: contain;        /* keep aspect ratio */
+        }
+
+        /* optional: tighten spacing of the main weather icon and text */
+        .weather-icon {
+        width: 8rem;
+        display: block;
+        margin: -1rem auto;
+        }
+
+
+        /* Container for daily forecast items */
+        .daily-forecast-container {
+            margin-top: 1rem;
+            width: 100%;  /* Full width */
+            text-align: center;
+        }
+
+        /* Individual daily forecast item - GRID LAYOUT */
+        .daily-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;  /* 3 columns: date, temps, conditions */
+            gap: 1rem;  /* Space between columns */
+            align-items: center;  /* Vertically center content */
+            padding: 1.5rem 2rem;
+            margin: 0;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            box-sizing: border-box;
+        }
+
+        /* Date column */
+        .day-date {
+            font-weight: bold;
+            font-size: 1.7rem;
+            text-align: center;
+        }
+
+        /* Temperature column (center) */
+        .day-temps {
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+        /* Conditions column */
+        .day-conditions {
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        /* Remove border from last item */
+        .daily-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Alternating background colors - STRONG CONTRAST */
+        .daily-item:nth-child(odd) {
+            background-color: rgba(164, 45, 107, 0.5);  /* Purple-pink */
+        }
+
+        .daily-item:nth-child(even) {
+            background-color: rgba(107, 29, 104, 0.5);  /* Darker purple */
+        }
+
+        /* Hover effect */
+        .daily-item:hover {
+            background-color: rgba(194, 104, 243, 0.6);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Remove default paragraph margin */
+        .daily-item p {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;  /* Prevents horizontal scrolling */
+        }
+
+        /* Background image layer with blur and parallax */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background-image: url('background.jpg');  /* ← Change to your image filename */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(5px);  /* Blurs the image */
+            z-index: -1;  /* Puts it behind everything */
+            transform: translateZ(0);  /* Enables parallax */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sticky Header Container (direct child of body) -->
+    <div class="sticky-header">
+         <div class="ui container">
+             <h1 class="ui header">Weather Forecast</h1>
+             <div style="margin-top: 0.5rem;">
+                <label for="autoRefreshInterval" 
+                    style="color:white; margin-right:0.5rem; font-family:'Work Sans', sans-serif; font-weight:500;">
+                    Auto-refresh (sec):
+                </label>
+
+                <div class="ui small input">
+                    <input type="number" id="autoRefreshInterval" min="20" max="120" value="60" style="width:60px;">
+                </div>
+                <button id="toggleAutoRefresh" class="ui button primary">ENABLE</button>
+            </div>
+            </div>
+    </div>
+
+    <div class="ui container" style="margin-top:2rem;">
+        <!-- CURRENT CONDITIONS card -->
+        <div class="ui fluid card">
+            <div class="content">
+                <div class="header"></div>
+
+                <!-- Current-conditions structured into two columns -->
+                <div class="description current-conditions">
+                    <div class="current-main">
+                        <!-- LEFT column: temp + humidity/pressure -->
+                        <div class="current-column">
+                            <div class="current-temp">
+                                <div class="temp-value" id="currentTemp">--°F</div>
+                                <div class="temp-feels" id="feelsLike">Feels like --°F</div>
+                            </div>
+                            <div class="current-details-left">
+                                <div class="current-detail">
+                                    <img src="fill/svg/barometer.svg" alt="Pressure" class="detail-icon">
+                                    <span id="pressure">-- inHg</span>
+                                </div>
+                                <div class="current-detail">
+                                    <img src="fill/svg/humidity.svg" alt="Humidity" class="detail-icon">
+                                    <span id="humidity">--%</span>
+                                </div>                            
+                            </div>
+                        </div>  
+
+                        <!-- RIGHT column: icon + wind/precip -->
+                        <div class="current-column">
+                            <div class="current-icon">
+                            <img id="currentIcon" src="fill/svg/cloudy.svg" alt="Condition" class="current-weather-icon">
+                            <div class="current-condition-text" id="conditionText">Condition</div>
+                        </div>
+
+                        <div class="current-details-right">
+                            <div class="current-detail">
+                                <img src="fill/svg/wind.svg" alt="Wind" class="detail-icon">
+                                <span id="wind">-- mph (--)</span>
+                            </div>
+                            <div class="current-detail">
+                                <img src="fill/svg/raindrops.svg" alt="Precipitation" class="detail-icon">
+                                <span id="precip">--%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END current-conditions -->
+        </div>
+    </div>
+
+        <div class="ui fluid card">
+            <div class="content">
+                <div class="header"></div>
+                <div class="hourly-scroll-container">
+                    <div class="hourly-items" id="hourly-forecast">
+                        <!-- Hours will be added here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui fluid card">
+            <div class="content">
+                <div class="header"></div>
+                <div class="daily-forecast-container" id = "dailyForecast">
+                    <!-- Javascript will fill this with real data -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API configuration
+        const API_TOKEN = "97b936d4-e681-4890-bc79-5d58010ea333";
+        const STATION_ID = "81414";
+
+        // Build the API URL with all required parameters
+        const API_URL = `https://swd.weatherflow.com/swd/rest/better_forecast?station_id=${STATION_ID}&token=${API_TOKEN}&units_temp=f&units_wind=mph&units_pressure=inhg&units_precip=in&units_distance=mi&units_other=imperial`;
+        // Function to fetch weather data
+        async function fetchWeather() {
+            console.log('Fetching weather data from API...');
+
+            try {
+                // Make the API request
+                const response = await fetch(API_URL);
+                // Convert response to JSON
+                const data = await response.json();
+                // Log the data to see what we got
+                console.log('Weather data received:', data);
+
+                // Display Current Conditions
+                displayCurrentConditions(data);
+                displayHourlyForecast(data);
+                displayDailyForecast(data);
+            }
+
+            catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        }
+
+        // Call the function when page loads
+        fetchWeather();
+
+        let autoRefreshTimer = null;
+        const refreshButton = document.getElementById('toggleAutoRefresh');
+        const intervalInput = document.getElementById('autoRefreshInterval');
+
+        refreshButton.addEventListener('click', () => {
+            // If auto-refresh is already running, stop it
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+                autoRefreshTimer = null;
+                refreshButton.textContent = 'Enable';
+            } else {
+                // Get user-selected interval (seconds)
+                let intervalSec = parseInt(intervalInput.value);
+                if (isNaN(intervalSec) || intervalSec < 20) intervalSec = 20;
+                if (intervalSec > 120) intervalSec = 120;
+
+                intervalInput.value = intervalSec;
+
+                // Start auto-refresh
+                autoRefreshTimer = setInterval(fetchWeather, intervalSec * 1000);
+                refreshButton.textContent = 'Disable';
+            }
+        });
+
+
+        // Display Current Conditions
+        function displayCurrentConditions(data) {
+            console.log('Displaying current conditions...');
+            const current = data.current_conditions;
+
+              // Main info
+                document.getElementById('currentTemp').textContent = `${Math.round(current.air_temperature)}°F`;
+                document.getElementById('feelsLike').textContent = `Feels like ${Math.round(current.feels_like)}°F`;
+
+                // Icon and text
+                const iconFile = getWeatherIcon(current.conditions, current.time);
+                document.getElementById('currentIcon').src = `fill/svg/${iconFile}`;
+                document.getElementById('conditionText').textContent = current.conditions;
+
+                // Details
+                document.getElementById('humidity').textContent = `${current.relative_humidity}%`;
+                document.getElementById('pressure').textContent = `${current.sea_level_pressure} inHg`;
+                document.getElementById('wind').textContent = `${current.wind_avg} mph (${current.wind_direction_cardinal})`;
+                document.getElementById('precip').textContent = `${current.precip_probability}%`;
+                }
+
+        // Display hourly forecast
+        function displayHourlyForecast(data) {
+            console.log('Displaying hourly forecast...');
+
+            const hourlyData = data.forecast.hourly;
+            const container = document.getElementById('hourly-forecast');
+
+            // Clear existing content
+            container.innerHTML = '';
+
+            // Get current hour
+            const now = new Date();
+            const currentHour = now.getHours();
+
+            // Show until one hour before current one tomorrow
+            const hoursToShow = 25;
+
+            // Display the hours
+            for (let i = 0; i < hoursToShow; i++) {
+                const hourData = hourlyData[i];
+
+                // Create hour card
+                const hourCard = document.createElement('div');
+                hourCard.className = 'hour-item';
+
+                // Format the time
+                const hourTime = new Date(hourData.time * 1000); // Convert Unix timestamp
+                const timeString = hourTime.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    hour12: true
+                });
+
+                // Pass the timestamp to getWeatherIcon
+                const iconFile = getWeatherIcon(hourData.conditions, hourData.time);
+
+                // Build the HTML
+                hourCard.innerHTML = `
+                <div class="hour-time">${timeString}</div>
+                <img src="fill/svg/${iconFile}" alt="${hourData.conditions}" class="weather-icon">
+                <div class="hour-precip">
+                    <img src="fill/svg/raindrops.svg" alt="precipitation" class="precip-icon">
+                    <span class="precip-percent">${hourData.precip_probability ?? 0}%</span>
+                </div>
+                <div class="hour-temp">${hourData.air_temperature}°F</div>
+                `;
+
+                container.appendChild(hourCard);
+            }
+        }
+
+        function displayDailyForecast(data) {
+            const dailyData = data.forecast.daily;
+            const container = document.getElementById('dailyForecast');
+
+            // Clear existing content
+            container.innerHTML = '';
+
+            // Loop through the first 10 days
+            for (let i = 0; i < 10; i++) {
+                const dayData = dailyData[i];
+
+                // Create a div for this day
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'daily-item';
+
+                // Format the date
+                const date = new Date(dayData.day_start_local * 1000);
+                const dayName = date.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                // Use noon (12pm) as the timestamp for daily icons
+                const noonTimestamp = dayData.day_start_local + (12 * 3600); // Add 12 hours
+                const iconFile = getWeatherIcon(dayData.conditions, noonTimestamp);
+
+                dayDiv.innerHTML = `
+                    <div class="day-date">${dayName}</div>
+                    <div class="day-temps">High ${Math.round(dayData.air_temp_high)}°F / Low ${Math.round(dayData.air_temp_low)}°F</div>
+                    <div class="day-conditions">
+                        <img src="fill/svg/${iconFile}" alt="${dayData.conditions}" class="weather-icon-small">
+                        ${dayData.conditions}
+                    </div>
+                `;
+
+                    // Add it to the container
+                    container.appendChild(dayDiv);
+            }
+        }
+
+        // Helper function to get weather icon filename
+        function getWeatherIcon(condition, timestamp) {
+            const conditionLower = condition.toLowerCase();
+            
+            // Get the hour from the timestamp
+            const date = new Date(timestamp * 1000);
+            const hour = date.getHours();
+            
+            // Determine if it's daytime (6am to 6pm)
+            const isDaytime = hour >= 6 && hour < 18;
+            
+            // Clear conditions - day or night
+            if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
+                return isDaytime ? 'clear-day.svg' : 'clear-night.svg';
+            }
+            
+            // Partly cloudy - day or night
+            else if (conditionLower.includes('partly cloudy') || conditionLower.includes('partly')) {
+                return isDaytime ? 'partly-cloudy-day.svg' : 'partly-cloudy-night.svg';
+            }
+            
+            // Cloudy (no day/night difference usually)
+            else if (conditionLower.includes('mostly cloudy') || conditionLower.includes('mostly')) {
+                return 'cloudy.svg';
+            }
+            
+            else if (conditionLower.includes('overcast') || conditionLower.includes('cloudy')) {
+                return 'overcast.svg';
+            }
+            
+            // Rain
+            else if (conditionLower.includes('rain') || conditionLower.includes('shower') || conditionLower.includes('drizzle')) {
+                return 'rain.svg';
+            }
+            
+            // Thunderstorms
+            else if (conditionLower.includes('thunderstorm') || conditionLower.includes('thunder') || conditionLower.includes('storm')) {
+                return 'thunderstorms.svg';
+            }
+            
+            // Snow
+            else if (conditionLower.includes('snow') || conditionLower.includes('flurries')) {
+                return 'snow.svg';
+            }
+            
+            // Fog
+            else if (conditionLower.includes('fog') || conditionLower.includes('mist') || conditionLower.includes('haze')) {
+                return 'fog.svg';
+            }
+            
+            // Wind
+            else if (conditionLower.includes('windy') || conditionLower.includes('breezy')) {
+                return 'wind.svg';
+            }
+            
+            // Default
+            else {
+                console.warn('Unknown condition:', condition);
+                return 'cloudy.svg';
+            }
+        }
+        // Sticky UI Scroll Effect
+        // Add shadow and color change to header when scrolling
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.sticky-header');
+            const headerText = header.querySelector('.sticky-header h1.ui.header');
+
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+                headerText.classList.add('scrolled'); 
+                //headerText.style.color = '#C268F3'; // Change text color on scroll
+            } else {
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+                headerText.classList.remove('scrolled');
+                //headerText.style.color = 'black'; // Revert text color
+            }
+        });
+    </script>
+</body>
+</html>
